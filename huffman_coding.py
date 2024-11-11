@@ -1,18 +1,44 @@
+class NodeTree:
+    def __init__(self, char=None, left=None, right=None):
+        self.char = char
+        self.left = left
+        self.right = right
 
+    def is_leaf(self):
+        return not self.left and not self.right
 
-# Get the input String
-string =
+def huffman_code_tree(node, binString=''):
+    if node.is_leaf():
+        return {node.char: binString}
+    huffman_code = {}
+    huffman_code.update(huffman_code_tree(node.left, binString + '0'))
+    huffman_code.update(huffman_code_tree(node.right, binString + '1'))
+    return huffman_code
 
-# Create tree nodes
-class NodeTree(object):
+def calculate_frequency(string):
+    freq = {}
+    for char in string:
+        if char in freq:
+            freq[char] += 1
+        else:
+            freq[char] = 1
+    return freq
 
-# Main function to implement huffman coding
-def huffman_code_tree(node, left=True, binString=''):
+def build_tree(frequencies):
+    nodes = [[NodeTree(char=char), freq] for char, freq in frequencies.items()]
+    while len(nodes) > 1:
+        nodes = sorted(nodes, key=lambda x: x[1])
+        left = nodes.pop(0)
+        right = nodes.pop(0)
+        merged_node = NodeTree(left=left[0], right=right[0])
+        nodes.append([merged_node, left[1] + right[1]])
+    return nodes[0][0]
 
-# Calculate frequency of occurrence
-freq = {}
-
-# Print the characters and its huffmancode
-huffmanCode = huffman_code_tree(nodes[0][0])
+string = "hello huffman"
+frequencies = calculate_frequency(string)
+huffman_tree = build_tree(frequencies)
+huffman_codes = huffman_code_tree(huffman_tree)
 
 print(' Char | Huffman code ')
+for char, code in huffman_codes.items():
+    print(f' {char!r}   | {code}')
